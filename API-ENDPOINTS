@@ -1,0 +1,50 @@
+CFC 2021 REST API END POINTS:
+
+
+CREATING A GLOBAL MIDDLEWARE 
+
+1.) Check all the request is coming from the verified source.
+RESPONSE:
+{
+    status:401,
+    Message:"Unauthorized"
+}
+
+
+
+1.) /api/user/auth/otp/genrate
+        method -> POST
+        header -> APP-API-KEY token to verify the source of request
+        body -> get mobile number from body
+
+        Expected RESPONSE:
+        
+        Type 1. {
+                 status:200,
+                 isError:False,
+                 Message:"OTP genration successful",
+                 token:"if there is any token genrated 2factor.in api"}
+        Type 2. {
+                status:500,
+                isError:True,
+                Message:"What error occured in backend"
+                }
+
+2.) /api/user/auth/otp/verify
+        method -> POST
+        header -> APP-API-KEY token to verify the source of request
+        body -> get otp and token(from 2factor api) from body
+
+        Expected RESPONSE:
+        
+        Type 1. {
+                 status:200,
+                 isError:False,
+                 Message:"User Successfully verified",
+                 token:"genrate a token using user object send it back"}
+        Type 2. {
+                status:500,
+                isError:True,
+                Message:"What error occured in backend"
+                }
+
