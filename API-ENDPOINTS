@@ -41,6 +41,7 @@ RESPONSE:
                  status:200,
                  isError:False,
                  Message:"User Successfully verified",
+                 isNewUser:True,
                  token:"genrate a token using user object send it back"}
         Type 2. {
                 status:500,
