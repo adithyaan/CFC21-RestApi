@@ -1,6 +1,6 @@
 applications:
-- buildpacks: 
-        - sdk-for-nodejs
+- buildpacks:
+  - sdk-for-nodejs
   command: npm start
   domain: null
   host: null
@@ -8,5 +8,5 @@ applications:
   memory: 256M
   name: CFCRESTAPI
   routes:
-  - route: immo-restapi.eu-gb.cf.appdomain.cloud
+  - route: immo-rest.eu-gb.cf.appdomain.cloud
   timeout: 180

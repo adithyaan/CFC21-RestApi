@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm start"
-  },
+    "start": "node index.js"
+},
   "author": "immortals",
   "license": "ISC",
   "dependencies": {
