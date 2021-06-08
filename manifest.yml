@@ -8,5 +8,5 @@ applications:
   memory: 256M
   name: CFCRESTAPI
   routes:
-  - route: immo-rest.eu-gb.cf.appdomain.cloud
+  - route: testhuman.eu-gb.cf.appdomain.cloud
   timeout: 180
