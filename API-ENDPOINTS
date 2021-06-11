@@ -12,7 +12,6 @@ RESPONSE:
 
 
 
-
 1.) /api/user/auth/otp/genrate
         method -> POST
         header -> APP-API-KEY token to verify the source of request
