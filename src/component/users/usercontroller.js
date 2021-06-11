@@ -30,8 +30,36 @@ exports.register=function(req,res,next){
 
 exports.login = function(req,res){
     var email = req.body.email;
-    var password =req.body.password;
     if(!email|| !password){
+        res.json({message:"please pass credentials"})
+    }
+    else{
+    model.findOne({email:email},function(err,userInfo){
+        if(err){
+            res.json("error");
+        }
+        else{
+            if(!userInfo){
+                res.json({message:"No user available with the id"})
+            }
+            else{
+                if(bcrypt.compareSync(password, userInfo.password)){
+                var token=jwt.sign({id:userInfo._id},config.secret,{expiresIn: config.expireTime})
+                res.json({token:token});
+                }
+                else{
+                    res.json({message:"username or password is incorrect"});
+                    
+                }
+            }
+        }
+    })
+}
+}
+
+exports.sendOTP = function(req,res){
+    var mobileno = parseInt(req.body.mobileno);
+    if(!mobileno==null || !mobileno=="" || isNaN(mobileno)){
         res.json({message:"please pass credentials"})
     }
     else{
