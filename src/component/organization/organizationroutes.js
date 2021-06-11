@@ -1,13 +1,13 @@
 var express=require('express');
 var router=express.Router();
-var controller=require('./usercontroller');
+// var controller=require('./usercontroller');
 
 router.post('/register',function(req,res){
-    controller.register(req,res);
+    // controller.register(req,res);
  
 });
 
 router.post('/login',function(req,res){
-    controller.login(req,res)
+    // controller.login(req,res)
 })
 module.exports=router;
