@@ -3,61 +3,7 @@ var jwt=require('jsonwebtoken');
 const User=require('./usermodel')
 const axios = require('axios');
 
-// exports.register=function(req,res,next){
-//     const body=req.body;
-//     if(typeof(body.username) === undefined || typeof(body.password) === undefined || typeof(body.email) === undefined || typeof(body.phonenumber) === undefined ){
-//         console.log(typeof(body.username)===undefined)
-//         res.send({message:"please pass credentials"})
-//     }
-
-//     else{
-//         console.log("in");
-
-//         model.create(req.body,function(err,docs){
-//         if(err){
-//             res.send(err);
-//             console.log("if");
-//         }
-//         else{
-//             console.log("sfd"+docs._id)
-//             var id=docs._id;
-//             var token=jwt.sign({id:id},config.secret,{expiresIn: config.expireTime})
-//             res.json({user:docs,token:token});
-//         }
-//         });
-//     }
-// }
-
-// exports.login = function(req,res){
-//     var email = req.body.email;
-//     if(!email|| !password){
-//         res.json({message:"please pass credentials"})
-//     }
-//     else{
-//     model.findOne({email:email},function(err,userInfo){
-//         if(err){
-//             res.json("error");
-//         }
-//         else{
-//             if(!userInfo){
-//                 res.json({message:"No user available with the id"})
-//             }
-//             else{
-//                 if(bcrypt.compareSync(password, userInfo.password)){
-//                 var token=jwt.sign({id:userInfo._id},config.secret,{expiresIn: config.expireTime})
-//                 res.json({token:token});
-//                 }
-//                 else{
-//                     res.json({message:"username or password is incorrect"});
-                    
-//                 }
-//             }
-//         }
-//     })
-// }
-// }
-
-async function generateOTP(mobileno) {
+  async function generateOTP(mobileno) {
     let req = await axios({
         method: 'get',
         url: 'http://2factor.in/API/V1/5e1816fb-a5b0-11e6-a40f-00163ef91450/SMS/'+parseInt(mobileno)+'/AUTOGEN'
@@ -77,7 +23,28 @@ async function generateOTP(mobileno) {
     let response = req.data;
     return response;
   }
-  
+
+  async function userPresent(req,res,r,mobno){
+    try{
+        User.find({mobileno:mobno})
+        .then(user =>{
+            console.log(user)
+            if(user.length !== 0){
+               r.userPresent="User Present";
+               res.json({verify:r});
+            }
+            else{
+                r.userPresent="User is not present please register";
+                res.json({verify:r});
+            }
+        }      
+        )
+        }
+        catch(err){
+            console.log(err)
+        }
+}
+
 exports.sendOTP = async function(req,res){
     var mobileno = parseInt(req.query.mobileno);
     
@@ -99,8 +66,7 @@ exports.verifyOTP = async function(req,res){
         let r=await verify(sessionId,otp);
         console.log(r)
         if(r.Details=="OTP Matched"){
-            
-            res.json(r);
+            await userPresent(req,res,r,mobileno)
         }
         else{
             res.json(
@@ -136,12 +102,3 @@ exports.register = async function(req,res){
         }
     }
 
-// exports.userPresent=async function(mobileno){
-//     try{
-//         const user=await User.findById(mobileno);
-//        console.log(user)
-//         }
-//         catch(err){
-//             console.log(err)
-//         }
-// }
