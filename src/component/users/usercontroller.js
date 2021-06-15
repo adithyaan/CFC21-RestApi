@@ -135,12 +135,12 @@ exports.register = async function(req,res){
         }
     }
 
-exports.userPresent=async function(mobileno){
-    try{
-        const user=await User.findById(mobileno);
-       console.log(user)
-        }
-        catch(err){
-            console.log(err)
-        }
-}
+// exports.userPresent=async function(mobileno){
+//     try{
+//         const user=await User.findById(mobileno);
+//        console.log(user)
+//         }
+//         catch(err){
+//             console.log(err)
+//         }
+// }
