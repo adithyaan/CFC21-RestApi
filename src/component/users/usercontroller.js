@@ -66,7 +66,7 @@ exports.verifyOTP = async function(req,res){
         let r=await verify(sessionId,otp);
         console.log(r)
         if(r.Details=="OTP Matched"){
-            await userPresent(req,res,r,mobileno)
+            res.json({Status:"Success",Details:"OTP verified"})
         }
         else{
             res.json(
@@ -75,7 +75,7 @@ exports.verifyOTP = async function(req,res){
         }
         }
         catch(err){
-            res.json({message:err})
+            res.json({Status:"Failed",Details:err})
         }
 }
     
