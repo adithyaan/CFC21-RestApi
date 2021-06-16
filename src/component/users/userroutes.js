@@ -10,11 +10,12 @@ res.send("Hello")
     // controller.register(req,res);
 });
 
-router.get('/verifyOTP/:mobileno/:sessionId/:otp',function(req,res){
+router.get('/verifyOTP/',function(req,res){
     controller.verifyOTP(req,res)
 })
 
-router.get('/sendOTP/:mobileno',function(req,res){
+router.get('/sendOTP/',function(req,res){
+    console.log("test",req.query.mobileno)
     controller.sendOTP(req,res)
 })
 

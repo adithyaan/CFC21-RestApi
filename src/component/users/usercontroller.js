@@ -60,10 +60,11 @@ const axios = require('axios');
 async function generateOTP(mobileno) {
     let req = await axios({
         method: 'get',
-        url: 'http://2factor.in/API/V1/5e1816fb-a5b0-11e6-a40f-00163ef91450/SMS/'+mobileno+'/AUTOGEN'
+        url: 'http://2factor.in/API/V1/5e1816fb-a5b0-11e6-a40f-00163ef91450/SMS/'+parseInt(mobileno)+'/AUTOGEN'
     });
   
     let response = req.data;
+    response.message='Successs'
     return response;
   }
 
@@ -78,8 +79,9 @@ async function generateOTP(mobileno) {
   }
   
 exports.sendOTP = async function(req,res){
-    var mobileno = parseInt(req.params.mobileno);
-    if(mobileno==null || mobileno=="" || isNaN(mobileno)){
+    var mobileno = parseInt(req.query.mobileno);
+    
+    if(mobileno==null || mobileno==""){
         res.json({message:"please pass credentials"})
     }
     else{
@@ -90,9 +92,8 @@ exports.sendOTP = async function(req,res){
     }
 
 exports.verifyOTP = async function(req,res){
-    var mobileno = parseInt(req.params.mobileno);
-    var sessionId=(req.params.sessionId).toString();
-    var otp=(req.params.otp).toString();
+    var sessionId=(req.query.sessionId).toString();
+    var otp=(req.query.otp).toString();
     console.log(sessionId,otp)
     try{
         let r=await verify(sessionId,otp);
