@@ -1,87 +1,104 @@
-// var model=require('./usermodel');
-// var jwt=require('jsonwebtoken');
-// var config=require('../config/config');
+var otpmodel=require('./usermodel');
+var jwt=require('jsonwebtoken');
+const User=require('./usermodel')
+const axios = require('axios');
 
+  async function generateOTP(mobileno) {
+    let req = await axios({
+        method: 'get',
+        url: 'http://2factor.in/API/V1/5e1816fb-a5b0-11e6-a40f-00163ef91450/SMS/'+parseInt(mobileno)+'/AUTOGEN'
+    });
+  
+    let response = req.data;
+    response.message='Successs'
+    return response;
+  }
 
-// exports.register=function(req,res,next){
-//     const body=req.body;
-//     if(typeof(body.username) === undefined || typeof(body.password) === undefined || typeof(body.email) === undefined || typeof(body.phonenumber) === undefined ){
-//         console.log(typeof(body.username)===undefined)
-//         res.send({message:"please pass credentials"})
-//     }
+  async function verify(sessionId,otp) {
+    let req = await axios({
+        method: 'get',
+        url: 'https://2factor.in/API/V1/5e1816fb-a5b0-11e6-a40f-00163ef91450/SMS/VERIFY/'+sessionId+'/'+otp
+    });
+  
+    let response = req.data;
+    return response;
+  }
 
-//     else{
-//         console.log("in");
+  async function userPresent(req,res,r,mobno){
+    try{
+        User.find({mobileno:mobno})
+        .then(user =>{
+            console.log(user)
+            if(user.length !== 0){
+               r.userPresent="User Present";
+               res.json({verify:r});
+            }
+            else{
+                r.userPresent="User is not present please register";
+                res.json({verify:r});
+            }
+        }      
+        )
+        }
+        catch(err){
+            console.log(err)
+        }
+}
 
-//         model.create(req.body,function(err,docs){
-//         if(err){
-//             res.send(err);
-//             console.log("if");
-//         }
-//         else{
-//             console.log("sfd"+docs._id)
-//             var id=docs._id;
-//             var token=jwt.sign({id:id},config.secret,{expiresIn: config.expireTime})
-//             res.json({user:docs,token:token});
-//         }
-//         });
-//     }
-// }
+exports.sendOTP = async function(req,res){
+    var mobileno = parseInt(req.query.mobileno);
+    
+    if(mobileno==null || mobileno==""){
+        res.json({message:"please pass credentials"})
+    }
+    else{
+        let r=await generateOTP(mobileno);
+        console.log(r)
+        res.json(r);
+        }
+    }
 
-// exports.login = function(req,res){
-//     var email = req.body.email;
-//     if(!email|| !password){
-//         res.json({message:"please pass credentials"})
-//     }
-//     else{
-//     model.findOne({email:email},function(err,userInfo){
-//         if(err){
-//             res.json("error");
-//         }
-//         else{
-//             if(!userInfo){
-//                 res.json({message:"No user available with the id"})
-//             }
-//             else{
-//                 if(bcrypt.compareSync(password, userInfo.password)){
-//                 var token=jwt.sign({id:userInfo._id},config.secret,{expiresIn: config.expireTime})
-//                 res.json({token:token});
-//                 }
-//                 else{
-//                     res.json({message:"username or password is incorrect"});
-                    
-//                 }
-//             }
-//         }
-//     })
-// }
-// }
+exports.verifyOTP = async function(req,res){
+    var sessionId=(req.query.sessionId).toString();
+    var otp=(req.query.otp).toString();
+    console.log(sessionId,otp)
+    try{
+        let r=await verify(sessionId,otp);
+        console.log(r)
+        if(r.Details=="OTP Matched"){
+            res.json({Status:"Success",Details:"OTP verified"})
+        }
+        else{
+            res.json(
+                { Status: 'Unsuccessfull', Details: 'OTP Did Not Matched' }
+            )
+        }
+        }
+        catch(err){
+            res.json({Status:"Failed",Details:err})
+        }
+}
+    
+exports.register = async function(req,res){
+    console.log(req.body)
+    const user=new User({
+        name:req.body.name,
+        dob:req.body.dob,
+        gender:req.body.gender,
+        address:req.body.address,
+        city:req.body.city,
+        state:req.body.state,
+        country:req.body.country,
+        usertype:req.body.usertype,
+        mobileno:req.body.mobileno,
+        jwttoken:jwt.sign({id:req.body.mobileno},'key',{expiresIn: '1d'})
+    });
+    try{
+        const savedUser=await user.save()
+        res.json(savedUser);
+        }
+        catch(err){
+            res.json({message:err})
+        }
+    }
 
-// exports.sendOTP = function(req,res){
-//     var mobileno = parseInt(req.body.mobileno);
-//     if(!mobileno==null || !mobileno=="" || isNaN(mobileno)){
-//         res.json({message:"please pass credentials"})
-//     }
-//     else{
-//     model.findOne({email:email},function(err,userInfo){
-//         if(err){
-//             res.json("error");
-//         }
-//         else{
-//             if(!userInfo){
-//                 res.json({message:"No user available with the id"})
-//             }
-//             else{
-//                 if(bcrypt.compareSync(password, userInfo.password)){
-//                 var token=jwt.sign({id:userInfo._id},config.secret,{expiresIn: config.expireTime})
-//                 res.json({token:token});
-//                 }
-//                 else{
-//                     res.json({message:"username or password is incorrect"});
-                    
-//                 }
-//             }
-//         }
-//     })
-// }
-// }

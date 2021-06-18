@@ -8,5 +8,5 @@ applications:
   memory: 256M
   name: CFCRESTAPI
   routes:
-  - route: hunger-management-rest-api.eu-gb.cf.appdomain.cloud
+  - route: humans-cfc.eu-gb.cf.appdomain.cloud
   timeout: 180
